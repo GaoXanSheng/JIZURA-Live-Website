@@ -7,6 +7,24 @@ import editor from '../assets/editor.png';
 const releases = 'https://github.com/GaoXanSheng/JIZURA-Live/releases/latest';
 const allReleases = 'https://github.com/GaoXanSheng/JIZURA-Live/releases';
 
+// 国内加速：gh-proxy.com 前缀式代理。构建时解析最新 Release 的安装包直链，
+// 拼成一步直达的加速地址；解析不到就不渲染入口，避免把坏链接放出去。
+const ghProxy = 'https://gh-proxy.com/';
+let accelHref = '';
+try {
+  const res = await fetch('https://api.github.com/repos/GaoXanSheng/JIZURA-Live/releases/latest', {
+    headers: { accept: 'application/vnd.github+json', 'user-agent': 'jizura-live-site' },
+    signal: AbortSignal.timeout(8000),
+  });
+  if (res.ok) {
+    const latest = await res.json();
+    const setup = (latest.assets ?? []).find((a) => a.name.endsWith('.exe'));
+    if (setup) accelHref = ghProxy + setup.browser_download_url;
+  }
+} catch {
+  // 构建环境取不到 GitHub API 时静默降级，只保留 GitHub 直链
+}
+
 // 两条版本线：3.0.0 起是 Skia版（纯 C# 实现，性能更好但不保证稳定性），2.2.0 是 CEF版
 const versions = [
   {
@@ -149,6 +167,11 @@ const exportFormats = [
           <a class="btn btn--primary" href={releases} target="_blank" rel="noopener noreferrer">
             下载 Windows 版
           </a>
+          {accelHref && (
+            <a class="btn" href={accelHref} target="_blank" rel="noopener noreferrer">
+              国内加速下载
+            </a>
+          )}
           <a class="btn" href={`${base}docs/getting-started/`}>
             3 分钟上手指南
           </a>
@@ -369,6 +392,16 @@ const exportFormats = [
             </div>
           ))}
         </div>
+
+        {accelHref && (
+          <p class="download-box__note">
+            GitHub 太慢或打不开？可用
+            <a href={accelHref} target="_blank" rel="noopener noreferrer">国内加速下载</a>
+            获取最新安装包（经第三方镜像
+            <a href="https://gh-proxy.com/" target="_blank" rel="noopener noreferrer">gh-proxy.com</a>
+            中转加速，非官方渠道）。
+          </p>
+        )}
 
         <div class="btn-row">
           <a class="btn btn--subtle" href="https://qm.qq.com/q/JiJpxIrxuM" target="_blank" rel="noopener noreferrer">

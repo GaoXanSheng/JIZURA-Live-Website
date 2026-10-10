@@ -849,6 +849,23 @@ a:hover {
   margin-top: 1.75rem;
 }
 
+.download-box .download-box__note {
+  margin: 1.25rem auto 0;
+  max-width: 34rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--fg-faint);
+}
+
+.download-box .download-box__note a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.download-box .download-box__note a:hover {
+  text-decoration: underline;
+}
+
 /* 两条版本线（Skia版 / CEF版） */
 .ver-row {
   display: grid;
