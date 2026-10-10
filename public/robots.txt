@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gaoxansheng.github.io/JIZURA-Live-Website/sitemap-index.xml

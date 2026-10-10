@@ -16,6 +16,78 @@ const {
 
 const path = Astro.url.pathname;
 
+// SEO：canonical 与社交卡片都用绝对地址（site 已在 astro.config 里配置）
+const canonical = new URL(path, Astro.site).href;
+const ogImage = new URL(`${base}og-cover.jpg`, Astro.site).href;
+const siteName = '字面 Live';
+
+const homeUrl = new URL(base, Astro.site).href;
+
+// 首页给软件实体，文档页给面包屑 —— 同一套 SoftwareApplication 铺到每个页面
+// 会让子页面的主题实体失真。
+const SEGMENT_LABELS: Record<string, string> = { docs: '使用说明', ref: '开发者文档' };
+const segments = path.slice(base.length).replace(/\/$/, '').split('/').filter(Boolean);
+
+const softwareApplication = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: '字面 Live',
+  alternateName: 'JIZURA Live',
+  applicationCategory: 'MultimediaApplication',
+  applicationSubCategory: '直播歌词渲染器',
+  operatingSystem: 'Windows 10, Windows 11',
+  description,
+  url: canonical,
+  downloadUrl: 'https://github.com/GaoXanSheng/JIZURA-Live/releases/latest',
+  screenshot: ogImage,
+  inLanguage: 'zh-Hans',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },
+  author: {
+    '@type': 'Organization',
+    name: 'JIZURA Live',
+    url: 'https://github.com/GaoXanSheng/JIZURA-Live',
+  },
+};
+
+const webSite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: '字面 Live',
+  alternateName: 'JIZURA Live',
+  url: homeUrl,
+  inLanguage: 'zh-Hans',
+};
+
+let structuredData: Record<string, unknown>[];
+if (segments.length === 0) {
+  structuredData = [softwareApplication, webSite];
+} else {
+  const crumbs = [{ name: '首页', url: homeUrl }];
+  let acc = base;
+  for (const [i, seg] of segments.entries()) {
+    acc += `${seg}/`;
+    const isLast = i === segments.length - 1;
+    crumbs.push({
+      name: isLast ? title.replace(/\s*—\s*字面 Live$/, '') : (SEGMENT_LABELS[seg] ?? seg),
+      url: new URL(acc, Astro.site).href,
+    });
+  }
+  structuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.name,
+        item: c.url,
+      })),
+    },
+  ];
+}
+
+const structuredDataJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
+
 const nav = [
   { href: `${base}docs/getting-started/`, label: '快速上手' },
   { href: `${base}docs/spout/`, label: '推流配置' },
@@ -33,12 +105,25 @@ const isCurrent = (href: string) => path.replace(/\/$/, '') === href.replace(/\/
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content="zh_CN" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="字面 Live 实时动态歌词渲染效果" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="theme-color" content="#0c0e14" />
     <link rel="icon" href={`${base}favicon.ico`} sizes="any" />
     <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+    <script type="application/ld+json" is:inline set:html={structuredDataJson} />
   </head>
   <body>
     <header class="site-head">
