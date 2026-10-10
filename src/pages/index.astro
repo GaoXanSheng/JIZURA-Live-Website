@@ -7,23 +7,9 @@ import editor from '../assets/editor.png';
 const releases = 'https://github.com/GaoXanSheng/JIZURA-Live/releases/latest';
 const allReleases = 'https://github.com/GaoXanSheng/JIZURA-Live/releases';
 
-// 国内加速：gh-proxy.com 前缀式代理。构建时解析最新 Release 的安装包直链，
-// 拼成一步直达的加速地址；解析不到就不渲染入口，避免把坏链接放出去。
-const ghProxy = 'https://gh-proxy.com/';
-let accelHref = '';
-try {
-  const res = await fetch('https://api.github.com/repos/GaoXanSheng/JIZURA-Live/releases/latest', {
-    headers: { accept: 'application/vnd.github+json', 'user-agent': 'jizura-live-site' },
-    signal: AbortSignal.timeout(8000),
-  });
-  if (res.ok) {
-    const latest = await res.json();
-    const setup = (latest.assets ?? []).find((a) => a.name.endsWith('.exe'));
-    if (setup) accelHref = ghProxy + setup.browser_download_url;
-  }
-} catch {
-  // 构建环境取不到 GitHub API 时静默降级，只保留 GitHub 直链
-}
+// 国内加速：跳第三方镜像 gh-proxy.com 的转换页（预填 Releases 列表地址）。
+// 属站外渠道、页面可能夹带广告，点击前用弹窗提醒用户自行辨别。
+const accelHref = 'https://gh-proxy.com/#https://github.com/GaoXanSheng/JIZURA-Live/releases';
 
 // 两条版本线：3.0.0 起是 Skia版（纯 C# 实现，性能更好但不保证稳定性），2.2.0 是 CEF版
 const versions = [
@@ -167,11 +153,9 @@ const exportFormats = [
           <a class="btn btn--primary" href={releases} target="_blank" rel="noopener noreferrer">
             下载 Windows 版
           </a>
-          {accelHref && (
-            <a class="btn" href={accelHref} target="_blank" rel="noopener noreferrer">
-              国内加速下载
-            </a>
-          )}
+          <a class="btn" href={accelHref} target="_blank" rel="noopener noreferrer" data-mirror-link>
+            国内加速下载
+          </a>
           <a class="btn" href={`${base}docs/getting-started/`}>
             3 分钟上手指南
           </a>
@@ -393,15 +377,11 @@ const exportFormats = [
           ))}
         </div>
 
-        {accelHref && (
-          <p class="download-box__note">
-            GitHub 太慢或打不开？可用
-            <a href={accelHref} target="_blank" rel="noopener noreferrer">国内加速下载</a>
-            获取最新安装包（经第三方镜像
-            <a href="https://gh-proxy.com/" target="_blank" rel="noopener noreferrer">gh-proxy.com</a>
-            中转加速，非官方渠道）。
-          </p>
-        )}
+        <p class="download-box__note">
+          GitHub 太慢或打不开？可走
+          <a href={accelHref} target="_blank" rel="noopener noreferrer" data-mirror-link>gh-proxy.com 国内加速</a>
+          自行选择版本下载。该页为第三方镜像，站内可能含广告，请自行辨别。
+        </p>
 
         <div class="btn-row">
           <a class="btn btn--subtle" href="https://qm.qq.com/q/JiJpxIrxuM" target="_blank" rel="noopener noreferrer">
@@ -427,4 +407,36 @@ const exportFormats = [
       </div>
     </div>
   </section>
+
+  <!-- 跳转第三方镜像前的渠道提示 -->
+  <dialog class="mirror-dialog" id="mirror-dialog" aria-labelledby="mirror-dialog-title">
+    <div class="mirror-dialog__body">
+      <h3 id="mirror-dialog-title">即将前往第三方镜像</h3>
+      <p>
+        加速下载由第三方站点 <strong>gh-proxy.com</strong> 提供，<strong>非官方渠道</strong>。
+        该页面可能包含广告，请自行辨别，也不要在站内输入账号密码等任何个人信息。
+      </p>
+      <div class="mirror-dialog__actions">
+        <button type="button" class="btn btn--subtle" data-mirror-cancel>取消</button>
+        <a class="btn btn--primary" href={accelHref} target="_blank" rel="noopener noreferrer">继续前往</a>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const mirrorDialog = document.getElementById('mirror-dialog');
+    if (mirrorDialog instanceof HTMLDialogElement) {
+      const dialog = mirrorDialog;
+      for (const link of document.querySelectorAll('[data-mirror-link]')) {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          dialog.showModal();
+        });
+      }
+      dialog.querySelector('[data-mirror-cancel]')?.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    }
+  </script>
 </Base>

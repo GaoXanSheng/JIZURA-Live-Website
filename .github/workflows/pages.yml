@@ -14,10 +14,6 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/pages.yml'
-  schedule:
-    # 每天 04:00（UTC+8）重建一次：首页「国内加速下载」链接是构建时解析最新 Release 的，
-    # 定时重建才能在新版本发布后自动跟上。
-    - cron: '0 20 * * *'
   workflow_dispatch:
 
 permissions:
