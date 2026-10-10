@@ -272,6 +272,14 @@ a:hover {
   margin-top: 2rem;
 }
 
+/* 首屏按钮强制分两行：前三个一行，两个「配置」按钮另起一行 */
+.btn-row__group {
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem;
+}
+
 /* ---------- 徽章与标签 ---------- */
 
 .badge {
