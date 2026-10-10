@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gaoxansheng.github.io/JIZURA-Live-Website/sitemap-index.xml
+Sitemap: https://yunmouren.top/JIZURA-Live-Website/sitemap-index.xml
