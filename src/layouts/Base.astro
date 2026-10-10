@@ -1,0 +1,136 @@
+---
+import '../styles/global.css';
+import { Image } from 'astro:assets';
+import { base } from '../lib/base';
+import appIcon from '../assets/app-icon.png';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = '字面 Live — 专为主播与歌回打造的 OBS 实时动态歌词引擎',
+  description = '字面 Live（JIZURA Live）是专为虚拟主播与音乐现场打造的 OBS 实时动态歌词渲染器：内置 27 套视觉风格，文字智能避让皮套立绘，显存直推 OBS 丝滑 60 帧，推流 CPU 零负担。支持酷狗与网易云曲库点播，纯本地离线运行。',
+} = Astro.props;
+
+const path = Astro.url.pathname;
+
+const nav = [
+  { href: `${base}docs/getting-started/`, label: '快速上手' },
+  { href: `${base}docs/spout/`, label: '推流配置' },
+  { href: `${base}docs/features/`, label: '27 套风格', secondary: true },
+  { href: `${base}docs/`, label: '全部文档', secondary: true },
+];
+
+const isCurrent = (href: string) => path.replace(/\/$/, '') === href.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0c0e14" />
+    <link rel="icon" href={`${base}favicon.ico`} sizes="any" />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
+  </head>
+  <body>
+    <header class="site-head">
+      <div class="wrap wrap--wide site-head__row">
+        <a class="brand" href={base}>
+          <Image src={appIcon} alt="" width={64} height={64} class="brand__logo" />
+          <span class="brand__name">字面 Live</span>
+          <span class="brand__badge">歌回推流引擎</span>
+        </a>
+        <nav class="site-nav">
+          {nav.map((item) => (
+            <a
+              href={item.href}
+              class={item.secondary ? 'site-nav__secondary' : undefined}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+          <a
+            href="https://github.com/GaoXanSheng/JIZURA-Live"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="site-nav__gh"
+          >
+            GitHub
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-foot">
+      <div class="wrap wrap--wide">
+        <div class="site-foot__row">
+          <div class="site-foot__brand">
+            字面 Live (JIZURA Live) · 免费提供 · 专为歌回与主播定制
+          </div>
+          <div class="site-foot__links">
+            <a href="https://qm.qq.com/q/JiJpxIrxuM" target="_blank" rel="noopener noreferrer">QQ 交流群</a>
+            <span aria-hidden="true">·</span>
+            <a href="https://github.com/GaoXanSheng/JIZURA-Live" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <span aria-hidden="true">·</span>
+            <a href={`${base}docs/privacy/`}>隐私与许可</a>
+            <span aria-hidden="true">·</span>
+            <a href={`${base}docs/ref/mcp/`}>开发者 MCP</a>
+          </div>
+        </div>
+        <p class="site-foot__legal">
+          工具本体基于 852wa/JIZURA 深度定制。用本工具制作的视频、动效及直播画面（输出物）版权归创作者所有；所使用的歌词与音乐伴奏版权归各自权利人所有。
+        </p>
+      </div>
+    </footer>
+
+    <dialog class="lightbox" aria-label="放大查看图片">
+      <img alt="" />
+    </dialog>
+
+    <script>
+      // 正文与界面截图点击放大：原生 <dialog>，自带遮罩与 Esc 关闭
+      const dlg = document.querySelector('.lightbox');
+      const big = dlg && dlg.querySelector('img');
+      if (dlg && big) {
+        for (const el of document.querySelectorAll('.prose img, .shot-frame img')) {
+          el.classList.add('zoomable');
+          el.tabIndex = 0;
+          el.setAttribute('role', 'button');
+          el.setAttribute('aria-label', `放大查看：${el.alt || '图片'}`);
+          const open = () => {
+            big.src = el.currentSrc || el.src;
+            big.alt = el.alt;
+            dlg.showModal();
+          };
+          el.addEventListener('click', open);
+          el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              open();
+            }
+          });
+        }
+        // 点画面任意处（含图片本身）关闭
+        dlg.addEventListener('click', () => dlg.close());
+      }
+
+      // 目录里点条目后收起面板，免得挡住刚跳到的内容
+      for (const a of document.querySelectorAll('.toc__panel a')) {
+        a.addEventListener('click', () => a.closest('details').removeAttribute('open'));
+      }
+    </script>
+  </body>
+</html>

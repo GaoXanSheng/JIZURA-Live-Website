@@ -1,0 +1,359 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { base } from '../lib/base';
+import editor from '../assets/editor.png';
+
+const releases = 'https://github.com/GaoXanSheng/JIZURA-Live/releases/latest';
+const allReleases = 'https://github.com/GaoXanSheng/JIZURA-Live/releases';
+
+// 两条版本线：3.0.0 起是 Skia版（纯 C# 实现，性能更好但不保证稳定性），2.2.0 是 CEF版
+const versions = [
+  {
+    name: 'Skia版',
+    tag: '3.0.0 起 · 当前主线',
+    highlight: true,
+    desc: '更好的性能与改进，不保证稳定性',
+    href: releases,
+    cta: '下载最新版',
+  },
+  {
+    name: 'CEF版',
+    tag: '2.2.0 · 使用 CEF',
+    highlight: false,
+    desc: '基于 CEF（Chromium Embedded Framework）',
+    href: allReleases,
+    cta: '前往 Releases 列表',
+  },
+];
+
+// 面向主播与用户的核心痛点与价值
+const highlights = [
+  {
+    tag: '现场动效',
+    title: '27 套动效风格 · 现场即是高能 PV',
+    body: '告别直播间单调干瘪的纯文本白字。故障风、极简光效、波形律动、毛玻璃……27 套视觉风格随声跳跃，观众点什么歌，直播间立刻化身专属音乐舞台。',
+    note: '支持一键 Omakase 盲盒随机 · 满意行可单独锁定',
+  },
+  {
+    tag: '画面布局',
+    title: '专属避让安全区 · 绝不挡住皮套与脸',
+    body: '专为虚拟主播与露脸唱见深度优化。支持自定义中央、左侧或四周留白，炫酷的动态歌词和粒子效果自动环绕在主播身侧跳动，你的立绘永远是视觉焦点。',
+    note: '横屏与竖屏直播自由排版 · 预览区带虚线指引',
+  },
+  {
+    tag: '现场点歌',
+    title: '云端曲库直搜 · 观众点歌即搜即唱',
+    body: '内置酷狗与网易云曲库实时搜索，歌单也能整单导入。伴奏载入瞬间自动分析全曲节拍，逐字打点与时间轴秒级就位，现场突发点歌无需手忙脚乱。',
+    note: '支持 KRC 逐字高亮 · 音译与翻译字幕可选',
+  },
+  {
+    tag: '推流性能',
+    title: 'Spout 显存直通 · 丝滑 60 帧不占 CPU',
+    body: '画面由 GPU 直接共享给 OBS，不落地、不截屏、不占用推流 CPU。1080p 帧耗时仅约 7ms，伴奏再躁游戏再大也绝不掉帧，低配电脑也能流畅开唱。',
+    note: 'GPU 零拷贝极速架构 · 直播画面绝不卡顿',
+  },
+  {
+    tag: '分层合成',
+    title: '主画面与字幕双通道 · 自由叠加',
+    body: '全景动效主通道与独立透明字幕通道（-LYRICS）并行直出。在 OBS 里既能做全屏氛围背景，也能单独提取纯字幕放置在角落，调色叠层互不干扰。',
+    note: '双通道均支持恒透明底 · 无需绿幕二次抠像',
+  },
+  {
+    tag: '安全离线',
+    title: '纯本地离线运行 · 音频歌词绝不上传',
+    body: '音频文件、私人歌单与本地缓存全程留在你的电脑里，不经过任何第三方服务器中转。零捆绑，开箱即用，生成的所有直播物料版权完全归你所有。',
+    note: '开源纯净 · 创作成果权利完全归属用户',
+  },
+];
+
+// 小白三步开播流程
+const steps = [
+  {
+    num: '01',
+    step: 'Step 1',
+    title: '搜歌与载入',
+    desc: '直接在软件内搜索网易云/酷狗曲库，或直接把本地伴奏拖入窗口，歌词与节奏智能匹配。',
+  },
+  {
+    num: '02',
+    step: 'Step 2',
+    title: '挑个动效风格',
+    desc: '在 27 套风格中挑选心仪的视觉效果，或点击 Omakase 盲盒随机抽取，调出专属直播质感。',
+  },
+  {
+    num: '03',
+    step: 'Step 3',
+    title: 'OBS 添源开唱',
+    desc: '在 OBS 来源中添加「Spout2 捕获」选中字面 Live，透明歌词立刻融入画面，开麦即唱！',
+  },
+];
+
+// 导出与格式翻译（面向创作者语言）
+const exportFormats = [
+  {
+    id: 'LIVE',
+    name: 'OBS 直播推流',
+    desc: 'Spout 显存直通，0 延迟、0 损耗，免去绿幕抠像烦恼，开播即用。',
+  },
+  {
+    id: 'WebM',
+    name: '透明底视频',
+    desc: 'VP9 编码带透明 Alpha 通道，拖入剪映、PR、达芬奇直接叠层。',
+  },
+  {
+    id: 'MP4',
+    name: '高清成片视频',
+    desc: '直接渲染带背景与字幕的高清 MP4，适合翻唱曲目与歌单成片速出。',
+  },
+  {
+    id: 'PNG',
+    name: '无损分层序列',
+    desc: '支持透明序列与前景/背景分层独立输出，方便后期深度定制精修。',
+  },
+];
+---
+
+<Base>
+  <!-- 首屏：视频背景 + 聚焦主播与歌回痛点 -->
+  <section class="hero">
+    <video
+      class="hero__bg"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster={`${base}demo-poster.jpg`}
+      aria-hidden="true"
+    >
+      <source src={`${base}demo.mp4`} type="video/mp4" />
+    </video>
+    <div class="hero__scrim" aria-hidden="true"></div>
+
+    <div class="wrap wrap--wide hero__inner">
+      <div class="hero__header">
+        <div class="hero__eyebrow-wrap">
+          <span class="badge">OBS 实时动态歌词引擎</span>
+          <span class="badge badge--neutral">专为歌回与虚拟主播打造</span>
+        </div>
+        <h1>
+          让歌词在直播间跳舞，<br />
+          <span class="text-highlight">把每一次开唱，变成现场 PV。</span>
+        </h1>
+        <p class="hero__lede">
+          告别单调纯文本白字。内置 27 套视觉风格与酷狗/网易云曲库，文字智能避让主播皮套，显存直推 OBS 丝滑 60 帧，推流 CPU 零负担。全本地运行，即下即播。
+        </p>
+
+        <div class="btn-row">
+          <a class="btn btn--primary" href={releases} target="_blank" rel="noopener noreferrer">
+            下载 Windows 版
+          </a>
+          <a class="btn" href={`${base}docs/getting-started/`}>
+            3 分钟上手指南
+          </a>
+          <a class="btn btn--subtle" href={`${base}docs/spout/#obs-快速入门`}>
+            OBS 配置
+          </a>
+          <a class="btn btn--subtle" href={`${base}docs/spout/#shoost-快速配置`}>
+            Shoost 配置
+          </a>
+        </div>
+
+        <div class="hero__meta">
+          <span class="hero__meta-item">
+            <span class="hero__meta-dot"></span>
+            Windows 10 / 11 · x64
+          </span>
+          <span class="hero__meta-item">显存直通 60 FPS</span>
+          <span class="hero__meta-item">免费提供 · 纯本地无广告</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 为什么用它：面向主播的 6 大核心价值卡片 -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section__head">
+        <span class="section__eyebrow">Why JIZURA Live</span>
+        <h2 class="section__title">为什么你的歌回直播间需要它？</h2>
+        <p class="section__desc">
+          以往想要炫酷的歌词动效，必须在 AE 里耗费数小时逐字打轴渲染；而普通直播歌词软件只有呆板单调的文本条。字面 Live 让动态 PV 在直播间实时发生。
+        </p>
+      </div>
+
+      <div class="grid-2">
+        {highlights.map((item) => (
+          <div class="card">
+            <div class="card__head">
+              <span class="card__tag">{item.tag}</span>
+            </div>
+            <h3 class="card__title">{item.title}</h3>
+            <p class="card__body">{item.body}</p>
+            <div class="card__footer">
+              <span>{item.note}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 小白三步开播流程 -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section__head">
+        <span class="section__eyebrow">Quick Start</span>
+        <h2 class="section__title">小白三步，即刻开播</h2>
+        <p class="section__desc">
+          无需复杂的动效工程知识，开播前只需简单三步，直播间立刻焕然一新。
+        </p>
+      </div>
+
+      <div class="steps">
+        {steps.map((s) => (
+          <div class="step-card">
+            <div class="step-card__num">
+              {s.num}
+              <span class="step-card__num-label">{s.step}</span>
+            </div>
+            <h3 class="step-card__title">{s.title}</h3>
+            <p class="step-card__desc">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 界面展台：所见即所得 -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section__head">
+        <span class="section__eyebrow">Interface</span>
+        <h2 class="section__title">直观清晰的编辑工作台</h2>
+        <p class="section__desc">
+          左侧管理歌词与曲库搜索，中间实时波形轴与避让预览，右侧自由调节 27 种动效与镜头手法。改动哪里，画面立刻响应。
+        </p>
+      </div>
+
+      <div class="shot-frame">
+        <div class="shot-frame__toolbar">
+          <div class="shot-frame__dot"></div>
+          <div class="shot-frame__dot"></div>
+          <div class="shot-frame__dot"></div>
+          <span class="shot-frame__title">JIZURA Live · Workspace Preview</span>
+        </div>
+        <Image
+          src={editor}
+          alt="字面 Live 编辑器界面：左侧歌词与曲库，中间带避让区域的预览画面与波形打点轴，右侧风格与特效调节"
+          format="webp"
+          quality={85}
+          widths={[720, 1080, 1440]}
+          sizes="(max-width: 1140px) 100vw, 864px"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 导出与多场景应用 -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section__head">
+        <span class="section__eyebrow">Formats</span>
+        <h2 class="section__title">不止直播推流，视频创作也能得心应手</h2>
+        <p class="section__desc">
+          除实时推流给 OBS 外，还能快速导出多种格式的高质量动效素材，满足歌回切片、短视频及后期制作需求。
+        </p>
+      </div>
+
+      <div class="grid-4">
+        {exportFormats.map((f) => (
+          <div class="format-card">
+            <div class="format-card__name">
+              <span>{f.name}</span>
+              <span class="format-card__badge">{f.id}</span>
+            </div>
+            <p class="format-card__desc">{f.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 进阶与开发者专区：MCP 协议支持 (收敛展示，不打扰普通主播) -->
+  <section class="section">
+    <div class="wrap">
+      <div class="dev-box">
+        <div class="dev-box__content">
+          <h3>
+            <span>🤖 AI 代理与自动化接入 (MCP)</span>
+            <span class="badge badge--neutral">进阶特性</span>
+          </h3>
+          <p>
+            软件内置基于 Model Context Protocol 的本地代理服务（17 个原生工具），支持 Claude、Cursor 等 AI 助手全自动分析节奏、生成排版方案与批量制作。
+          </p>
+        </div>
+        <a class="btn btn--subtle" href={`${base}docs/ref/mcp/`}>
+          开发者 MCP 规范 →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 下载与交流反馈 -->
+  <section class="section">
+    <div class="wrap">
+      <div class="download-box">
+        <span class="badge">Free & Open Source</span>
+        <h2>立即开启你的炫酷歌回现场</h2>
+        <p>
+          专为 Windows 打造的歌词推流神器。免费下载，即刻为你的直播间装上现场 PV 引擎。
+        </p>
+
+        <div class="ver-row">
+          {versions.map((v) => (
+            <div class={v.highlight ? 'ver-card ver-card--highlight' : 'ver-card'}>
+              <div class="ver-card__head">
+                <span class="ver-card__name">{v.name}</span>
+                <span class={v.highlight ? 'badge badge--green' : 'badge badge--neutral'}>{v.tag}</span>
+              </div>
+              <p class="ver-card__desc">{v.desc}</p>
+              <a
+                class={v.highlight ? 'btn btn--primary' : 'btn'}
+                href={v.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {v.cta}
+              </a>
+            </div>
+          ))}
+        </div>
+
+        <div class="btn-row">
+          <a class="btn btn--subtle" href="https://qm.qq.com/q/JiJpxIrxuM" target="_blank" rel="noopener noreferrer">
+            加入 QQ 交流群
+          </a>
+          <a class="btn btn--subtle" href={`${base}docs/getting-started/#两个版本`}>
+            两个版本有什么区别？
+          </a>
+        </div>
+
+        <div class="download-box__footer">
+          <span>系统要求：Windows 10 / 11 64位</span>
+          <span>·</span>
+          <span>安装包由 Inno Setup 纯净打包</span>
+          <span>·</span>
+          <span>
+            有任何问题加群反馈：
+            <a href="https://qm.qq.com/q/JiJpxIrxuM" target="_blank" rel="noopener noreferrer">
+              JIZURA-Live 问题反馈
+            </a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

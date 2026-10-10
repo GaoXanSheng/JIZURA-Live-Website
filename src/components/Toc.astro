@@ -1,0 +1,27 @@
+---
+// 右下角悬浮目录：headings 由 Astro 在构建时从 markdown 标题生成，
+// 展开/收起用原生 <details>，不需要 JS。
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+const { headings } = Astro.props as { headings: Heading[] };
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  items.length > 0 && (
+    <details class="toc">
+      <summary>目录</summary>
+      <nav class="toc__panel" aria-label="本页目录">
+        {items.map((h) => (
+          <a href={`#${h.slug}`} class={h.depth === 3 ? 'toc__sub' : undefined}>
+            {h.text}
+          </a>
+        ))}
+      </nav>
+    </details>
+  )
+}

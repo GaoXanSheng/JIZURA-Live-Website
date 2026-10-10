@@ -1,0 +1,26 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Toc from '../../../components/Toc.astro';
+import { referenceMeta } from '../../../lib/reference';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('reference');
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const meta = referenceMeta[entry.id];
+---
+
+<Base title={`${meta?.title ?? entry.id} — 字面 Live`} description={meta?.description}>
+  <section class="doc">
+    <div class="wrap wrap--narrow">
+      <article class="prose prose--doc">
+        <Content />
+      </article>
+    </div>
+  </section>
+  <Toc headings={headings} />
+</Base>

@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { base } from '../../lib/base';
+import { referenceDocs } from '../../lib/reference';
+
+const docs = (await getCollection('docs')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base
+  title="使用说明 — 字面 Live"
+  description="字面 Live 使用说明：快速上手、直播推流（Spout）、功能与手法、导出格式、AI 代理接入、隐私与许可；以及 MCP 接入与 AI 代理开发文档。"
+>
+  <section class="doc">
+    <div class="wrap wrap--narrow">
+      <div class="doc__head">
+        <h1>使用说明</h1>
+        <p>从载入一首歌到实时推流或导出成片。</p>
+      </div>
+      <ul class="doc-index">
+        {docs.map((doc) => (
+          <li>
+            <a href={`${base}docs/${doc.id}/`}>
+              <span class="doc-index__title">{doc.data.title}</span>
+              <span class="doc-index__desc">{doc.data.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="doc-index__group">开发与代理文档</h2>
+      <ul class="doc-index">
+        {referenceDocs.map((doc) => (
+          <li>
+            <a href={`${base}docs/ref/${doc.id}/`}>
+              <span class="doc-index__title">{doc.title}</span>
+              <span class="doc-index__desc">{doc.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
