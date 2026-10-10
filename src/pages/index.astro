@@ -183,6 +183,25 @@ const exportFormats = [
         </p>
       </div>
 
+      <!-- 实机演示：字面 Live 与 OBS 同屏实录 -->
+      <figure class="demo-frame">
+        <div class="demo-frame__bar">
+          <span class="demo-frame__tag">实机演示</span>
+          <span class="demo-frame__note">字面 Live 与 OBS 同屏实录</span>
+        </div>
+        <video
+          controls
+          preload="metadata"
+          playsinline
+          width="1920"
+          height="1080"
+          poster={`${base}demo-live-poster.jpg`}
+        >
+          <source src={`${base}demo-live.mp4`} type="video/mp4" />
+          你的浏览器不支持内嵌视频，<a href={`${base}demo-live.mp4`}>点这里直接播放</a>。
+        </video>
+      </figure>
+
       <div class="grid-2">
         {highlights.map((item) => (
           <div class="card">

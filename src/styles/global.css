@@ -664,6 +664,71 @@ a:hover {
   height: auto;
 }
 
+/* ---------- 实机演示视频 ---------- */
+
+.demo-frame {
+  margin: 0 0 2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #000;
+  box-shadow: var(--shadow-card);
+}
+
+.demo-frame__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.demo-frame__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  border: 1px solid rgba(255, 59, 92, 0.25);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.demo-frame__tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: demo-pulse 2s ease-in-out infinite;
+}
+
+@keyframes demo-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.demo-frame__note {
+  color: var(--fg-faint);
+  font-size: 0.8125rem;
+}
+
+.demo-frame video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* ---------- 格式与能力迷你卡片 ---------- */
 
 .format-card {
