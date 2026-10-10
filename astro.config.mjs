@@ -1,14 +1,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// 站点挂在自定义域名的子路径下：https://yunmouren.top/JIZURA-Live-Website/
-// <user>.github.io 会 301 跳到这里，所以 canonical / sitemap 必须写这个域名，
-// 否则声明出去的规范地址指向一个重定向。
-const origin = 'https://yunmouren.top';
-const repo = 'JIZURA-Live-Website';
+// 本站绑了独立子域名 jizuralive.yunmouren.top，由 GitHub Pages 提供。
+// 项目站绑上自定义域名后是在域名根路径下提供服务，所以 base 用 '/'。
+const origin = 'https://jizuralive.yunmouren.top';
 
 export default defineConfig({
   site: origin,
-  base: `/${repo}`,
+  base: '/',
   integrations: [sitemap()],
 });

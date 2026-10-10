@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://yunmouren.top/JIZURA-Live-Website/sitemap-index.xml
+Sitemap: https://jizuralive.yunmouren.top/sitemap-index.xml
