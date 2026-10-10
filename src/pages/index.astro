@@ -183,10 +183,29 @@ const exportFormats = [
         </p>
       </div>
 
-      <!-- 实机演示：字面 Live 与 OBS 同屏实录 -->
+      <!-- 实机演示：成片效果 -->
       <figure class="demo-frame">
         <div class="demo-frame__bar">
           <span class="demo-frame__tag">实机演示</span>
+          <span class="demo-frame__note">动态歌词实时渲染成片</span>
+        </div>
+        <video
+          controls
+          preload="metadata"
+          playsinline
+          width="1280"
+          height="720"
+          poster={`${base}demo-live-poster.jpg`}
+        >
+          <source src={`${base}demo-live.mp4`} type="video/mp4" />
+          你的浏览器不支持内嵌视频，<a href={`${base}demo-live.mp4`}>点这里直接播放</a>。
+        </video>
+      </figure>
+
+      <!-- 实机演示：工作流同屏实录 -->
+      <figure class="demo-frame">
+        <div class="demo-frame__bar">
+          <span class="demo-frame__tag">工作流实录</span>
           <span class="demo-frame__note">字面 Live 与 OBS 同屏实录</span>
         </div>
         <video
@@ -195,10 +214,10 @@ const exportFormats = [
           playsinline
           width="1920"
           height="1080"
-          poster={`${base}demo-live-poster.jpg`}
+          poster={`${base}demo-live-obs-poster.jpg`}
         >
-          <source src={`${base}demo-live.mp4`} type="video/mp4" />
-          你的浏览器不支持内嵌视频，<a href={`${base}demo-live.mp4`}>点这里直接播放</a>。
+          <source src={`${base}demo-live-obs.mp4`} type="video/mp4" />
+          你的浏览器不支持内嵌视频，<a href={`${base}demo-live-obs.mp4`}>点这里直接播放</a>。
         </video>
       </figure>
 
