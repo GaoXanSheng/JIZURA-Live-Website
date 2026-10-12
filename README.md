@@ -2,14 +2,14 @@
 
 「字面 Live」（JIZURA Live）的产品站与使用说明。Astro 静态站点，发布到 GitHub Pages。
 
-- **线上地址**：<https://gaoxansheng.github.io/JIZURA-Live-Website/>
+- **线上地址**：<https://jizuralive.yunmouren.top/>
 - **应用仓库**：<https://github.com/GaoXanSheng/JIZURA-Live>
 
 ## 本地开发
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321/JIZURA-Live-Website/
+npm run dev        # http://localhost:4321/
 npm run build      # 产物在 dist/
 npm run preview    # 本地预览构建产物
 ```
@@ -41,10 +41,17 @@ order: 7
 推送到 `main` 即由 [`.github/workflows/pages.yml`](.github/workflows/pages.yml) 构建并发布。
 仓库 Settings → Pages → Source 需设为 **GitHub Actions**。
 
+站点绑定自定义域名 `jizuralive.yunmouren.top`：在 Settings → Pages → Custom domain 配置，
+DNS 侧是 Cloudflare 的 CNAME 记录（`jizuralive` → `gaoxansheng.github.io`，代理状态须为「仅 DNS」）。
+用 Actions 流程发布时不需要 `CNAME` 文件，GitHub 会忽略它。
+
+绑上自定义域名后站点位于域名根路径，所以 `astro.config.mjs` 里 `site` 是完整域名、`base` 是 `/`；
+改域名时两者要一起改，否则静态资源路径会对不上。
+
 ## 与应用仓库的关系
 
 安装包由应用仓库的 [Release 工作流](https://github.com/GaoXanSheng/JIZURA-Live/blob/main/.github/workflows/release.yml)
 构建并上传，本站的「下载」按钮指向应用仓库的 `releases/latest`。
 
 开发与 AI 代理文档（`DOC/MCP.md`、`DOC/SKILL.md`）已从应用仓库迁到本仓库，由本站渲染成
-[/docs/ref/](https://gaoxansheng.github.io/JIZURA-Live-Website/docs/ref/mcp/) 下的页面，不再外链应用仓库。
+[/docs/ref/](https://jizuralive.yunmouren.top/docs/ref/mcp/) 下的页面，不再外链应用仓库。
